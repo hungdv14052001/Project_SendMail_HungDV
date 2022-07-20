@@ -20,7 +20,7 @@
                 <input class="txtControl" type="text" placeholder="User name" required v-model="username">
             </div>
             <div class="validation">
-                <div id="username-Validation" class="close">
+                <div id="username-Validation" v-if="isUserName">
                     Enter your username!
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 <input class="txtControl" type="password" placeholder="Password" v-model="password">
             </div>
             <div class="validation">
-                <div id="password-Validation" class="close">
+                <div id="password-Validation" v-if="isPassword">
                     Enter your password!
                 </div>
             </div>
@@ -64,7 +64,9 @@
             return{
                 username: '',
                 password: '',
-                userList: []
+                userList: [],
+                isUserName: false,
+                isPassword: false,
             };
         },
         methods: {
@@ -76,8 +78,23 @@
                 var username = this.username;
                 var password = this.password;
                 var idUser=0;
-                if(this.checkValidation('username-Validation', username)==false||this.checkValidation('password-Validation', password)==false){
-                    return;
+                var resultCheck= true;
+                if(username.length==0){
+                  this.isUserName= true;
+                  resultCheck= false;
+                }
+                else{
+                  this.isUserName= false;
+                }
+                if(password.length==0){
+                  this.isPassword= true;
+                  resultCheck= false;
+                }
+                else{
+                  this.isPassword= false;
+                }
+                if(resultCheck==false){
+                  return;
                 }
                 for(var i= 0; i<this.userList.length;i++){
                     if(username==this.userList[i].userName && password==this.userList[i].password){
@@ -100,23 +117,6 @@
             register(){
                 var itemElement= document.getElementById("register");
                 itemElement.classList.add("openFlex");
-            },
-
-            /// <summary>
-            /// delete data from API
-            /// </summary>
-            /// <param name="id"></param>
-            /// <param name="value"></param>
-            checkValidation(id, value){
-                var itemId= document.getElementById(id);
-                if(value.length==0){
-                    itemId.classList.add("open");
-                    return false;
-                }
-                else{
-                    itemId.classList.remove("open");
-                    return true;
-                }
             }
         }
     }

@@ -4,22 +4,16 @@
             <div class="margin30"></div>
             Home
         </NuxtLink>
-        <button @click="displayListSystem" class="menu-item1">
-            {{System}}
-        </button>
-        <div id="list-System" class="close">
-            <NuxtLink to="/SendMailPage" class="menu-item2">
-                <div class="margin30"></div>
-                Send mail
-            </NuxtLink>
-        </div>
-        <div @click="displayListModel" class="menu-item1">
-            {{Module}}
-        </div>
-        <div id="list-Model" class="close">
+        <div>
             <NuxtLink to="/UserListPage" class="menu-item2">
                 <div class="margin30"></div>
                 User
+            </NuxtLink>
+        </div>
+        <div>
+            <NuxtLink to="/SendMailPage" class="menu-item2">
+                <div class="margin30"></div>
+                Send mail
             </NuxtLink>
         </div>
     </div>
@@ -31,34 +25,9 @@
         },
         data(){
             return{
-                System: 'System  ▲',
-                Module: 'Module  ▲',
             }
         },
         methods: {
-             displayListSystem(){
-                var itemElement= document.getElementById("list-System");
-                if(itemElement.classList.length==1){
-                    itemElement.classList.add("open");
-                    this.System='System  ▼';
-                }
-                else{
-                    itemElement.classList.remove("open");
-                    this.System='System  ▲';
-                }
-            },
-            displayListModel(){
-                var itemElement= document.getElementById("list-Model");
-                console.log(itemElement.classList);
-                if(itemElement.classList.length==1){
-                    itemElement.classList.add("open");
-                    this.Module='Module  ▼';
-                }
-                else{
-                    itemElement.classList.remove("open");
-                    this.Module='Module  ▲';
-                }
-            }
         }
     }
 </script>
@@ -109,11 +78,5 @@
     .btnHome:hover,.menu-item2:hover{
         cursor: pointer;
         background-color: #f0f0f0;
-    }
-    .close{
-        display: none;
-    }
-    .open{
-        display: block;
     }
 </style>

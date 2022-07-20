@@ -24,7 +24,7 @@ namespace ToolSendMail.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("upload")]
-        public async Task<List<EmployeeSalary>> upload(IFormFile file)
+        public async Task<List<EmployeeSalary>> upload(IFormFile file, string ccEmail)
         {
             var listEmployeeSalary = new List<EmployeeSalary>();
             using (var stream = new MemoryStream())
@@ -45,9 +45,12 @@ namespace ToolSendMail.Controllers
                             employeeSalary.Position = worksheet.Cells[row, 3].Value.ToString().Trim();
                             employeeSalary.Email= worksheet.Cells[row, 4].Value.ToString().Trim();
                             employeeSalary.BasicSalary = int.Parse(worksheet.Cells[row, 5].Value.ToString().Trim());
-                            employeeSalary.Bonus = 2930000;
+                            employeeSalary.Bonus = int.Parse(worksheet.Cells[row, 6].Value.ToString().Trim());
+                            employeeSalary.Bonus += int.Parse(worksheet.Cells[row, 7].Value.ToString().Trim());
+                            employeeSalary.Bonus += int.Parse(worksheet.Cells[row, 8].Value.ToString().Trim());
+                            employeeSalary.Bonus += int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim());
                             employeeSalary.NumberDay = int.Parse(worksheet.Cells[row, 11].Value.ToString().Trim());
-                            employeeSalary.Deduction = (employeeSalary.BasicSalary) * 105 / 1000;
+                            employeeSalary.Deduction = int.Parse(worksheet.Cells[row, 23].Value.ToString().Trim());
                         }
                         catch { }
                         if (employeeSalary.Email.Contains("@")){
@@ -55,38 +58,63 @@ namespace ToolSendMail.Controllers
                         }
                     }
                 }
-                foreach (EmployeeSalary e in listEmployeeSalary)
-                {
-                    ThongBaoMK(e.Email, e);
-                }
-                
+                //foreach (EmployeeSalary e in listEmployeeSalary)
+                //{
+                //    ThongBao(ccEmail, e);
+                //}
+
             }
             return listEmployeeSalary;
         }
-        void ThongBaoMK(string email, EmployeeSalary employeeSalary)
+        void ThongBao(string ccEmail, EmployeeSalary employeeSalary)
         {
             string tb = "<div>Chào " + employeeSalary.Name + " thân ái!" + "</div>" +
-                "<div style=\"height: 30px; margin-left: 100px; color: red; font-weight: bold; \">THÔNG TIN BẢNG LƯƠNG</div>" +
-                "<div style=\"display: flex;\">" +
-                "   <div style=\"width: 280px; border: 1px solid #000; \">Lương cơ bản:</div>" +
-                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.BasicSalary) + "</div>" +
+                "<div style=\"margin-top: 20px; margin-left: 100px; color: red; font-weight: bold; \">THÔNG TIN BẢNG LƯƠNG</div>" +
+                "<div style=\"border-bottom: 1px solid #f0f0f0; display: flex; margin-top: 20px; height: 27px; width: 360px;\">" +
+                "   <div style=\" width: 240px; \">Mã nhân viên</div>" +
+                "   <div style=\" width: 120px; text-align: right; \">" + employeeSalary.Id + "</div>" +
                 "</div>" +
-                "<div style=\"display: flex;\">" +
-                "   <div style=\"width: 280px; border: 1px solid #000; \">Tổng thưởng và hỗ trợ:</div>" +
-                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.Bonus) + "</div>" +
+                "<div style=\"border-bottom: 1px solid #f0f0f0; display: flex; margin-top: 10px; height: 27px; width: 360px;\">" +
+                "   <div style=\" width: 240px; \">Họ tên</div>" +
+                "   <div style=\" width: 120px; text-align: right; \">" + employeeSalary.Name + "</div>" +
                 "</div>" +
-                "<div style=\"display: flex;\">" +
-                "   <div style=\"width: 280px; border: 1px solid #000; \">Tổng chi phí trừ(Bao gồm bảo hiểm):</div>" +
-                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.Deduction) + "</div>" +
+                "<div style=\"border-bottom: 1px solid #f0f0f0; display: flex; margin-top: 10px; height: 27px; width: 360px;\">" +
+                "   <div style=\" width: 240px; \">Chức vụ</div>" +
+                "   <div style=\" width: 120px; text-align: right; \">" + employeeSalary.Position + "</div>" +
                 "</div>" +
-                "<div style=\"display: flex; color: red;\">" +
-                "   <div style=\"width: 280px; border: 1px solid #000; \">Tổng lương:</div>" +
-                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", (employeeSalary.BasicSalary + employeeSalary.Bonus - employeeSalary.Deduction)) + "</div>" +
+                "<div style=\"border-bottom: 1px solid #f0f0f0; display: flex; margin-top: 10px; height: 27px; width: 360px;\">" +
+                "   <div style=\" width: 240px; \">Lương cơ bản</div>" +
+                "   <div style=\" width: 120px; text-align: right; \">" + String.Format("{0:n0}", employeeSalary.BasicSalary) + "</div>" +
                 "</div>" +
-                "Công ty devfast!";
+                "<div style=\"border-bottom: 1px solid #f0f0f0;display: flex; margin-top: 10px; height: 27px; width: 360px;\">" +
+                "   <div style=\"width: 240px;  \">Tổng thưởng và hỗ trợ</div>" +
+                "   <div style=\" width: 120px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.Bonus) + "</div>" +
+                "</div>" +
+                "<div style=\"border-bottom: 1px solid #f0f0f0; display: flex; margin-top: 10px; height: 27px; width: 360px;\">" +
+                "   <div style=\"width: 240px; \">Tổng chi phí trừ(Bao gồm bảo hiểm)</div>" +
+                "   <div style=\" width: 120px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.Deduction) + "</div>" +
+                "</div>" +
+                "<div style=\" border-bottom: 1px solid #f0f0f0; display: flex; margin-top: 10px; height: 27px; color: red; width: 360px;\">" +
+                "   <div style=\"width: 240px;  \">Tổng lương</div>" +
+                "   <div style=\" width: 120px; text-align: right;\">" + String.Format("{0:n0}", (employeeSalary.BasicSalary + employeeSalary.Bonus - employeeSalary.Deduction)) + "</div>" +
+                "</div>" +
+                "<div style=\"width: 360px; text-align: right; margin-top: 20px;\">Công ty devfast!</div>";
             // tạo một tin nhắn và thêm những thông tin cần thiết như: ai gửi, người nhận, tên tiêu đề, và có đôi lời gì cần nhắn nhủ
-            MailMessage mail = new MailMessage("ctydevfast@gmail.com", email, "Thông Báo Bảng Lương", tb); //
+            MailMessage mail = new MailMessage("ctydevfast@gmail.com", employeeSalary.Email, "Thông Báo Bảng Lương", tb); //
             mail.IsBodyHtml = true;
+            if (ccEmail.Length > 0)
+            {
+                try
+                {
+                    MailAddress copy = new MailAddress(ccEmail);
+                    mail.CC.Add(copy);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
             //gửi tin nhắn
             SmtpClient client = new SmtpClient("smtp.gmail.com");
             client.Host = "smtp.gmail.com";

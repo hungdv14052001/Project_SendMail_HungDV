@@ -15,7 +15,7 @@ namespace ToolSendMail.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly BaseRepository userRepository;
+        private readonly UserRepository userRepository;
 
         /// <summary>
         /// Initialization User Controller
@@ -98,7 +98,7 @@ namespace ToolSendMail.Controllers
         {
             try
             {
-                await userRepository.DeleteEntity(id);
+                await userRepository.DeleteEntityById(id);
             }
             catch
             {

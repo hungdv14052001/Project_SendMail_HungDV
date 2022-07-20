@@ -16,10 +16,10 @@
             </div>
         </div>
         <div class="validation-cotairner">
-            <div id="validation-First" class="close">
+            <div id="validation-First" v-if="isFirstname">
                 Enter your first name!
             </div>
-            <div id="validation-Last" class="va close">
+            <div id="validation-Last" v-if="isLastname">
                 Enter your last name!
             </div>
         </div>
@@ -27,7 +27,7 @@
             <input type="text" class="txt-control" placeholder="Email" v-model="email">
         </div>
         <div class="validation-cotairner">
-            <div id="validation-Email" class="close">
+            <div id="validation-Email" v-if="isEmail">
                 {{validateEmail}}
             </div>
         </div>
@@ -35,7 +35,7 @@
             <input type="text" class="txt-control" placeholder="User name" v-model="userName">
         </div>
         <div class="validation-cotairner">
-            <div id="validation-Name" class="close">
+            <div id="validation-Name" v-if="isUserName">
                 Enter your user name!
             </div>
         </div>
@@ -43,7 +43,7 @@
             <input type="password" class="txt-control" placeholder="Password" v-model="password">
         </div>
         <div class="validation-cotairner">
-            <div id="validation-Password" class="close">
+            <div id="validation-Password" v-if="isPassword">
                 Enter your password!
             </div>
         </div>
@@ -51,7 +51,7 @@
             <input type="password" class="txt-control" placeholder="Confirm password" v-model="confirmPassword">
         </div>
         <div class="validation-cotairner">
-            <div id="validation-Confirm" class="close">
+            <div id="validation-Confirm" v-if="isConfirm">
                 {{validateConfirm}}
             </div>
         </div>
@@ -71,6 +71,12 @@
                 confirmPassword: '',
                 validateEmail: '',
                 validateConfirm: '',
+                isFirstname: false,
+                isLastname: false,
+                isUserName: false,
+                isEmail: false,
+                isPassword: false,
+                isConfirm: false,
             };
         },
         methods: {
@@ -86,25 +92,60 @@
             /// Register User
             /// </summary>
             Register(){
+                var resultCheck= true;
                 this.validateEmail='Enter your email!';
                 this.validateConfirm='Enter your confirm password!';
-                if(this.checkValidation('validation-First', this.firstname)==false ||this.checkValidation('validation-Last', this.lastname)==false ||this.checkValidation('validation-Email', this.email)==false || this.checkValidation('validation-Name', this.userName)==false||this.checkValidation('validation-Password', this.password)==false||this.checkValidation('validation-Confirm', this.confirmPassword)==false){
+                if(this.firstname.length==0){
+                    this.isFirstname= true;
+                    resultCheck= false;
+                }
+                else{
+                    this.isFirstname= false;
+                }
+                if(this.lastname.length==0){
+                    this.isLastname= true;
+                    resultCheck= false;
+                }
+                else{
+                    this.isLastname= false;
+                }
+                if(this.userName.length==0){
+                    this.isUserName= true;
+                    resultCheck= false;
+                }
+                else{
+                    this.isUserName= false;
+                }
+                if(this.email.length==0){
+                    this.isEmail= true;
+                    resultCheck= false;
+                }
+                else{
+                    this.isEmail= false;
+                }
+                if(this.password.length==0){
+                    this.isPassword= true;
+                    resultCheck= false;
+                }
+                else{
+                    this.isPassword= false;
+                }
+                if(this.confirmPassword.length==0){
+                    this.isConfirm= true;
+                    resultCheck= false;
+                }
+                else{
+                    this.isConfirm= false;
+                }
+                if(resultCheck==false){
                     return;
                 }
                 if(!this.email.includes('@')||!this.email.includes('.')){
-                    var itemId= document.getElementById('validation-Email');
-                    this.validateEmail = 'Invalid email!';
-                    if(itemId.classList.length==1){
-                        itemId.classList.add("open");
-                    }
+                    this.isEmail= true;
                     return;
                 }
                 if(this.password!=this.confirmPassword){
-                    var itemId= document.getElementById('validation-Confirm');
-                    this.validateConfirm = 'The entered passwords do not match. Try again!';
-                    if(itemId.classList.length==1){
-                        itemId.classList.add("open");
-                    }
+                    this.isConfirm= true;
                     return;
                 }
                 var dataUser={
@@ -145,18 +186,6 @@
                     body: JSON.stringify(data) 
                 });
                 return response.json(); 
-            },
-            checkValidation(id, value){
-                var result= false;
-                var itemId= document.getElementById(id);
-                if(value.length==0){
-                    itemId.classList.add("open");
-                }
-                else{
-                    itemId.classList.remove("open");
-                    result= true;
-                }
-                return result;
             }
         }
     }

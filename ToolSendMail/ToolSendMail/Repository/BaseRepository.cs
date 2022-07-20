@@ -8,10 +8,10 @@ using ToolSendMail.Models;
 
 namespace ToolSendMail.Repository
 {
-    public abstract class BaseRepository
+    public abstract class BaseRepository<T> : IBaseRepository<T> where T : class, new()
     {
         private readonly EntityContext _ctx;
-
+        private DbSet<T> Model { get; set; }
         /// <summary>
         /// Initialization Base Repository
         /// </summary>
@@ -19,30 +19,31 @@ namespace ToolSendMail.Repository
         public BaseRepository(EntityContext ctx)
         {
             this._ctx = ctx;
+            Model = ctx.Set<T>();
         }
 
         /// <summary>
         /// get all entity in DataBase
         /// </summary>
         /// <returns>List<BaseEntity></returns>
-        public async Task<List<BaseEntity>> GetAllEntityAsync()
+        public async Task<List<T>> GetAllEntityAsync()
         {
-            List<BaseEntity> baseEntities = new List<BaseEntity>();
-            foreach (var blog in await _ctx.Users.ToListAsync())
+            List<T> entities = new List<T>();
+            foreach (T entity in await Model.ToListAsync())
             {
-                baseEntities.Add(blog);
+                entities.Add(entity);
             }
-            return baseEntities;
+            return entities;
         }
 
-        public async Task<List<BaseEntity>> GetAllEntityByKeyAsync(string key)
+        public async Task<List<T>> GetAllEntityByKeyAsync(string key)
         {
-            List<BaseEntity> baseEntities = new List<BaseEntity>();
-            foreach (var blog in await _ctx.Users.ToListAsync())
+            List<T> entities = new List<T>();
+            foreach (T entity in await Model.ToListAsync())
             {
-                baseEntities.Add(blog);
+                entities.Add(entity);
             }
-            return baseEntities;
+            return entities;
         }
 
         /// <summary>
@@ -50,12 +51,12 @@ namespace ToolSendMail.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns>BaseEntity</returns>
-        public async Task<BaseEntity> GetEntityByIdAsync(int id)
+        public async Task<T> GetEntityByIdAsync(int id)
         {
-            BaseEntity entity;
+            T entity;
             try
             {
-                entity = await _ctx.Users.FindAsync(id);
+                entity = await Model.FindAsync(id);
             }
             catch
             {
@@ -63,7 +64,7 @@ namespace ToolSendMail.Repository
             }
             if (entity == null)
             {
-                return new User();
+                return new T();
             }
             else
             {
@@ -78,19 +79,9 @@ namespace ToolSendMail.Repository
         /// <returns>BaseEntity</returns>
         public async Task<BaseEntity> CreateEntityAsync(BaseEntity baseEntity)
         {
-            string type = baseEntity.GetType().Name;
-            if (type.Equals("User"))
-            {
-                _ctx.Users.Add(baseEntity as User);
-                await _ctx.SaveChangesAsync();
-                User user = _ctx.Users.OrderByDescending(u => u.Id).FirstOrDefault();
-                await UpdateEntityAsync(user.Id, user);
-            }
-            else
-            {
-                
-            }
-
+            T entity = baseEntity as T;
+            Model.Add(entity);
+            SaveChange();
             return baseEntity;
         }
 
@@ -102,7 +93,6 @@ namespace ToolSendMail.Repository
         /// <returns>bool</returns>
         public async Task<bool> UpdateEntityAsync(int id, BaseEntity baseEntity)
         {
-            string type = baseEntity.GetType().Name;
             try
             {
                 baseEntity.Id = id;
@@ -121,17 +111,16 @@ namespace ToolSendMail.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns>bool</returns>
-        public async Task<bool> DeleteEntity(int id)
+        public async Task<bool> DeleteEntityById(int id)
         {
             bool result = false;
-            string type = this.GetType().Name;
             if (EntityExist(id))
             {
-                User user = await GetEntityByIdAsync(id) as User;
+                T entity = await GetEntityByIdAsync(id);
                 try
                 {
-                    _ctx.Users.Remove(user);
-                    await _ctx.SaveChangesAsync();
+                    Model.Remove(entity);
+                    SaveChange();
                     result = true;
                 }
                 catch
@@ -140,6 +129,14 @@ namespace ToolSendMail.Repository
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// save action
+        /// </summary>
+        public void SaveChange()
+        {
+            _ctx.SaveChanges();
         }
 
         /// <summary>

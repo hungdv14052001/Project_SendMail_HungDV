@@ -6,13 +6,13 @@ using ToolSendMail.Models;
 
 namespace ToolSendMail.Repository
 {
-    public interface IBaseRepository
+    public interface IBaseRepository<T>
     {
         Task<BaseEntity> CreateEntityAsync(BaseEntity baseEntity);
-        Task<List<BaseEntity>> GetAllEntityAsync();
-        Task<List<BaseEntity>> GetAllEntityByKeyAsync(string key);
-        Task<BaseEntity> GetEntityByIdAsync(int id);
+        Task<List<T>> GetAllEntityAsync();
+        Task<List<T>> GetAllEntityByKeyAsync(string key);
+        Task<T> GetEntityByIdAsync(int id);
         Task<bool> UpdateEntityAsync(int id, BaseEntity baseEntity);
-        Task<bool> DeleteEntity(int id);
+        Task<bool> DeleteEntityById(int id);
     }
 }

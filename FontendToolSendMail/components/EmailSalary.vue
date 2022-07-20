@@ -8,60 +8,69 @@
                 <div class="margin30"></div>
                 Input file:
             </div>
-            <div class="input-file-contairner">
-                <img src="../assets/images/logoexcel.jpg" width="40" class="margin30">
-                <input type="file" class="margin30 input-file" @change="getFile($event)" name="myfile" accept=".csv, .xlsx, .xls"/>
+            <div class="newheight">
+                <VueFileAgent @change="getFile($event)" class="margin30 getFile" accept=".csv, .xlsx, .xls" v-model="file"></VueFileAgent>
             </div>
-            <div class="input-file-contairner">
-                <button @click="doUpload" class=" margin30 btnCheck">Check and Send mail</button>
+            <div class="margin30">
+                CC Email
+            </div>
+            <div class="input-file-contairner mg0">
+                <div class="margin30 lbCC">
+                    CC
+                </div>
+                <div class="txtCC">
+                    <input placeholder="CC Email" type="text" class="inputCC" v-model="ccEmail" />
+                </div>
+                <button @click="doUpload" class="margin30 btnCheck">Upload</button>
+                <button @click="clear" class=" margin30 btnClear">Clear</button>
             </div>
             <div class="input-file-title">
                 <div class="margin30"></div>
                 Employee in file
             </div>
             <div class="title-row-list">
-                <div class="col-type1">
+                <div class="col-typeE1">
                     ID
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE3">
                     Name
                 </div>
-                <div class="col-type3">
+                <div class="col-typeE3">
                     Email
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     Basic Salary
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     Number Day
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     Bonus
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     Deduction
                 </div>
             </div>
             <li v-for="employee in ListEmployee" class="title-row-list boolnone">
-                <div class="col-type1">
+                <div class="col-typeE1">
                     {{employee.id}}
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE3">
                     {{employee.name}}
                 </div>
-                <div class="col-type3">
+                <div class="col-typeE3">
                     {{employee.email}}
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     {{employee.basicSalary}}
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     {{employee.numberDay}}
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     {{employee.bonus}}
                 </div>
-                <div class="col-type2">
+                <div class="col-typeE2">
                     {{employee.deduction}}
                 </div>
             </li>
@@ -72,12 +81,20 @@
     </div>
 </template>
 <script>
-    const apiUpload='https://localhost:44348/api/SendMail/upload';
+    import Vue from 'vue';
+    import VueFileAgent from 'vue-file-agent';
+    import VueFileAgentStyles from 'vue-file-agent/dist/vue-file-agent.css';
+
+    Vue.use(VueFileAgent);
+
+    const apiUpload='https://localhost:44348/api/SendMail/upload?ccEmail=';
     export default{
         data(){
             return{
                 excelData: null,
-                ListEmployee: []
+                ListEmployee: [],
+                ccEmail: '',
+                file: '',
             }
         },
         methods: {
@@ -94,16 +111,18 @@
             /// </summary>
             async doUpload(){
                 const excelData= this.excelData;
+                const ccEmail= this.ccEmail;
                 if(excelData==null){
                     alert("Input file, please!")
                     return;
                 }
                 const formdata= new FormData();
                 formdata.append('file', excelData, 'excelData.xlsx')
+                
                 if (confirm('Do you want to Check and Send mail for employee?')) {
                     var it= document.getElementById("load-contairer");
                     it.classList.add("openFlex");
-                    this.postFile(apiUpload, formdata)
+                    this.postFile(apiUpload+ this.ccEmail, formdata)
                     .then(data=>{
                         this.ListEmployee= data;
                         it.classList.remove("openFlex");    
@@ -114,15 +133,24 @@
             },
             
             /// <summary>
+            /// clear file and cc Email
+            /// </summary>
+            clear(){
+                this.file='';
+                this.ListEmployee= [];
+                this.ccEmail='';
+            },
+
+            /// <summary>
             /// post File from API
             /// </summary>
             /// <param name="url"></param>
             /// <param name="file"></param>
             /// <returns>response.json()</returns>
-            async postFile(url = '', file) {
+            async postFile(url = '' , file) {
                 const response = await fetch(url, {
                     method: 'POST',
-                    body: file 
+                    body: file
                 });
                 return response.json(); 
             },
@@ -164,13 +192,23 @@
         content: 'Browser';
     }
     .btnCheck{
-        width: 200px;
-        height: 30px;
         background-color: #007BFF;
         color: white;
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: bold;
-        border-radius: 15px;
+        font-family: Arial;
+        border-radius: 3px;
+        height: 32px;
+        width: 80px;
+        margin: 0 10px;
+    }
+    .btnClear{
+        background-color: white;
+        color: #007BFF;
+        font-family: Arial;
+        border-radius: 3px;
+        height: 32px;
+        width: 80px;
+        margin: 0 10px;
+        border: 1px solid #007BFF;
     }
     .margin30{
         margin-left: 30px;
@@ -189,25 +227,25 @@
     .boolnone{
         font-weight: 500;
     }
-    .col-type1{
+    .col-typeE1{
         height: 100%;
         width: 5%;
         margin-left: 2%;
         display: flex;
         align-items: center;
     }
-    .col-type2{
+    .col-typeE2{
         height: 100%;
-        width: 13%;
+        width: 11%;
         display: flex;
         align-items: center;
     }
-    .col-type3{
+    .col-typeE3{
         height: 100%;
-        width: 22%;
+        width: 24%;
         display: flex;
         align-items: center;
-        justify-content: le;
+        justify-content: left;
     }
     #load-contairer{
         position: fixed;
@@ -243,5 +281,49 @@
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+    .close{
+        display: none;
+    }
+    .openFlex{
+        display: flex;
+    }
+    .open{
+        display: block;
+    }
+    .newheight{
+        height: 180px;
+        display: flex;
+        width: 20px;
+    }
+    .txtCC{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 32px;
+        width: 250px;
+        border: 1px solid #ccc;
+        background-color: white;
+    }
+    .inputCC{
+        width: 90%;
+        height: 100%;
+        outline: none;
+    }
+    .newheight VueFileAgent{
+        height: 100px;
+    }
+    .getFile{
+        width: 300px;
+        position: absolute;
+    }
+    .lbCC{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 32px;
+        width: 40px;
+        background-color: white;
+        border: 1px solid #ccc;
     }
 </style>
