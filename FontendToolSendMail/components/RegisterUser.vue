@@ -9,10 +9,10 @@
         <div class="sep"></div>
         <div class="body-item border-none">
             <div class="sub-item">
-                <input type="text" class="txt-control" placeholder="First name" v-model="Firstname">
+                <input type="text" class="txt-control" placeholder="First name" v-model="firstname">
             </div>
             <div class="sub-item">
-                <input type="text" class="txt-control" placeholder="Last name" v-model="Lastname">
+                <input type="text" class="txt-control" placeholder="Last name" v-model="lastname">
             </div>
         </div>
         <div class="validation-cotairner">
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="body-item">
-            <input type="text" class="txt-control" placeholder="Email" v-model="Email">
+            <input type="text" class="txt-control" placeholder="Email" v-model="email">
         </div>
         <div class="validation-cotairner">
             <div id="validation-Email" class="close">
@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="body-item">
-            <input type="text" class="txt-control" placeholder="User name" v-model="UserName">
+            <input type="text" class="txt-control" placeholder="User name" v-model="userName">
         </div>
         <div class="validation-cotairner">
             <div id="validation-Name" class="close">
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="body-item">
-            <input type="password" class="txt-control" placeholder="Password" v-model="Password">
+            <input type="password" class="txt-control" placeholder="Password" v-model="password">
         </div>
         <div class="validation-cotairner">
             <div id="validation-Password" class="close">
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="body-item">
-            <input type="password" class="txt-control" placeholder="Confirm password" v-model="ConfirmPassword">
+            <input type="password" class="txt-control" placeholder="Confirm password" v-model="confirmPassword">
         </div>
         <div class="validation-cotairner">
             <div id="validation-Confirm" class="close">
@@ -63,12 +63,12 @@
 
         data(){
             return{
-                Firstname:'',
-                Lastname: '',
-                UserName: '',
-                Email: '',
-                Password: '',
-                ConfirmPassword: '',
+                firstname:'',
+                lastname: '',
+                userName: '',
+                email: '',
+                password: '',
+                confirmPassword: '',
                 validateEmail: '',
                 validateConfirm: '',
             };
@@ -88,10 +88,10 @@
             Register(){
                 this.validateEmail='Enter your email!';
                 this.validateConfirm='Enter your confirm password!';
-                if(this.checkValidation('validation-First', this.Firstname)==false ||this.checkValidation('validation-Last', this.Lastname)==false ||this.checkValidation('validation-Email', this.Email)==false || this.checkValidation('validation-Name', this.UserName)==false||this.checkValidation('validation-Password', this.Password)==false||this.checkValidation('validation-Confirm', this.ConfirmPassword)==false){
+                if(this.checkValidation('validation-First', this.firstname)==false ||this.checkValidation('validation-Last', this.lastname)==false ||this.checkValidation('validation-Email', this.email)==false || this.checkValidation('validation-Name', this.userName)==false||this.checkValidation('validation-Password', this.password)==false||this.checkValidation('validation-Confirm', this.confirmPassword)==false){
                     return;
                 }
-                if(!this.Email.includes('@')||!this.Email.includes('.')){
+                if(!this.email.includes('@')||!this.email.includes('.')){
                     var itemId= document.getElementById('validation-Email');
                     this.validateEmail = 'Invalid email!';
                     if(itemId.classList.length==1){
@@ -99,7 +99,7 @@
                     }
                     return;
                 }
-                if(this.Password!=this.ConfirmPassword){
+                if(this.password!=this.confirmPassword){
                     var itemId= document.getElementById('validation-Confirm');
                     this.validateConfirm = 'The entered passwords do not match. Try again!';
                     if(itemId.classList.length==1){
@@ -108,11 +108,11 @@
                     return;
                 }
                 var dataUser={
-                    userName: this.UserName,
-                    email: this.Email,
+                    userName: this.userName,
+                    email: this.email,
                     status: false,
-                    password: this.Password,
-                    fullName: this.Firstname+ this.Lastname
+                    password: this.password,
+                    fullName: this.firstname+ ' '+this.lastname
                 }
                 
                 try{
@@ -156,6 +156,7 @@
                     itemId.classList.remove("open");
                     result= true;
                 }
+                return result;
             }
         }
     }

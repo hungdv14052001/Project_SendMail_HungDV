@@ -10,10 +10,10 @@
             </div>
             <div class="input-file-contairner">
                 <img src="../assets/images/logoexcel.jpg" width="40" class="margin30">
-                <input type="file" class="margin30 input-file" @change="uploadFile($event)" name="myfile" accept=".csv, .xlsx, .xls"/>
+                <input type="file" class="margin30 input-file" @change="getFile($event)" name="myfile" accept=".csv, .xlsx, .xls"/>
             </div>
             <div class="input-file-contairner">
-                <button @click="check" class=" margin30 btnCheck">Check and Send mail</button>
+                <button @click="doUpload" class=" margin30 btnCheck">Check and Send mail</button>
             </div>
             <div class="input-file-title">
                 <div class="margin30"></div>
@@ -72,6 +72,7 @@
     </div>
 </template>
 <script>
+    const apiUpload='https://localhost:44348/api/SendMail/upload';
     export default{
         data(){
             return{
@@ -84,14 +85,14 @@
             /// <summary>
             /// get file of input
             /// </summary>
-            uploadFile(e){
+            getFile(e){
                 this.excelData = e.target.files[0];
             },
 
             /// <summary>
             /// get file and send mail for employee
             /// </summary>
-            async check(){
+            async doUpload(){
                 const excelData= this.excelData;
                 if(excelData==null){
                     alert("Input file, please!")
@@ -102,7 +103,7 @@
                 if (confirm('Do you want to Check and Send mail for employee?')) {
                     var it= document.getElementById("load-contairer");
                     it.classList.add("openFlex");
-                    this.postFile('https://localhost:44348/api/SendMail/upload', formdata)
+                    this.postFile(apiUpload, formdata)
                     .then(data=>{
                         this.ListEmployee= data;
                         it.classList.remove("openFlex");    
@@ -111,6 +112,7 @@
                     alert("Cancelled");
                 }
             },
+            
             /// <summary>
             /// post File from API
             /// </summary>

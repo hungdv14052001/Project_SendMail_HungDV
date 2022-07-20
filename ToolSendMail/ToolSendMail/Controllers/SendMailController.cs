@@ -17,9 +17,14 @@ namespace ToolSendMail.Controllers
     [ApiController]
     public class SendMailController : ControllerBase
     {
+        /// <summary>
+        /// Upload File Excel to get Employee Salary
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("upload")]
-        public async Task<List<EmployeeSalary>> getInforSalary(IFormFile file)
+        public async Task<List<EmployeeSalary>> upload(IFormFile file)
         {
             var listEmployeeSalary = new List<EmployeeSalary>();
             using (var stream = new MemoryStream())
@@ -48,9 +53,6 @@ namespace ToolSendMail.Controllers
                         if (employeeSalary.Email.Contains("@")){
                             listEmployeeSalary.Add(employeeSalary);
                         }
-                        //user.Id = int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
-                        //user.Email = worksheet.Cells[row, 3].Value.ToString().Trim();
-                        //listUser.Add(user);
                     }
                 }
                 foreach (EmployeeSalary e in listEmployeeSalary)
@@ -67,23 +69,23 @@ namespace ToolSendMail.Controllers
                 "<div style=\"height: 30px; margin-left: 100px; color: red; font-weight: bold; \">THÔNG TIN BẢNG LƯƠNG</div>" +
                 "<div style=\"display: flex;\">" +
                 "   <div style=\"width: 280px; border: 1px solid #000; \">Lương cơ bản:</div>" +
-                "   <div style=\"border: 1px solid #000; width: 70px\">" + String.Format("{0:n0}", employeeSalary.BasicSalary) + "</div>" +
+                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.BasicSalary) + "</div>" +
                 "</div>" +
                 "<div style=\"display: flex;\">" +
                 "   <div style=\"width: 280px; border: 1px solid #000; \">Tổng thưởng và hỗ trợ:</div>" +
-                "   <div style=\"border: 1px solid #000; width: 70px\">" + String.Format("{0:n0}", employeeSalary.Bonus) + "</div>" +
+                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.Bonus) + "</div>" +
                 "</div>" +
                 "<div style=\"display: flex;\">" +
                 "   <div style=\"width: 280px; border: 1px solid #000; \">Tổng chi phí trừ(Bao gồm bảo hiểm):</div>" +
-                "   <div style=\"border: 1px solid #000; width: 70px\">" + String.Format("{0:n0}", employeeSalary.Deduction) + "</div>" +
+                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", employeeSalary.Deduction) + "</div>" +
                 "</div>" +
                 "<div style=\"display: flex; color: red;\">" +
                 "   <div style=\"width: 280px; border: 1px solid #000; \">Tổng lương:</div>" +
-                "   <div style=\"border: 1px solid #000; width: 70px;\">" + String.Format("{0:n0}", (employeeSalary.BasicSalary + employeeSalary.Bonus - employeeSalary.Deduction)) + "</div>" +
+                "   <div style=\"border: 1px solid #000; width: 80px; text-align: right;\">" + String.Format("{0:n0}", (employeeSalary.BasicSalary + employeeSalary.Bonus - employeeSalary.Deduction)) + "</div>" +
                 "</div>" +
                 "Công ty devfast!";
             // tạo một tin nhắn và thêm những thông tin cần thiết như: ai gửi, người nhận, tên tiêu đề, và có đôi lời gì cần nhắn nhủ
-            MailMessage mail = new MailMessage("DoGoVanHung1405@gmail.com", email, "Thông Báo Bảng Lương", tb); //
+            MailMessage mail = new MailMessage("ctydevfast@gmail.com", email, "Thông Báo Bảng Lương", tb); //
             mail.IsBodyHtml = true;
             //gửi tin nhắn
             SmtpClient client = new SmtpClient("smtp.gmail.com");
@@ -95,31 +97,6 @@ namespace ToolSendMail.Controllers
             client.Credentials = new System.Net.NetworkCredential("ctydevfast@gmail.com", "lwiwlqojojmjmkba");
             client.EnableSsl = true; //vì ta cần thiết lập kết nối SSL với SMTP server nên cần gán nó bằng true
             client.Send(mail);
-
-            ///
-            //string from, to, pass, content;
-            //from = "ctydevfast@gmail.com";
-            //pass = "lwiwlqojojmjmkba";
-            //to = email;
-            //content= "Chào "+ employeeSalary.Name;
-            //MailMessage mail = new MailMessage();
-            //mail.To.Add(to);
-            //mail.From = new MailAddress(from);
-            //mail.Subject = "Thông Báo Lương";
-            //mail.Body = content;
-            //SmtpClient smpt = new SmtpClient("smpt.gmail.com");
-            //smpt.EnableSsl = true;
-            //smpt.Port = 587;
-            //smpt.DeliveryMethod = SmtpDeliveryMethod.Network;
-            //smpt.Credentials = new NetworkCredential(from, pass);
-            //try
-            //{
-            //    smpt.Send(mail);
-            //}
-            //catch
-            //{
-
-            //}
         }
     }
 }
